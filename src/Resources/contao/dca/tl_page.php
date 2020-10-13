@@ -19,8 +19,7 @@ use Espin\PageInfoBundle\EventListener\PageInfo;
 /**
  * Add panel layout to tl_page
  */
-$GLOBALS['TL_DCA']['tl_page']['list']['sorting']['panelLayout']                 =
-    'page_info,' . $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['panelLayout'];
+$GLOBALS['TL_DCA']['tl_page']['list']['sorting']['panelLayout']                 .= ',page_info';
 $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['panel_callback']['page_info'] = [PageInfo::class, 'generatePanel'];
 
 /**

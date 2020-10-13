@@ -53,9 +53,9 @@ class PageInfo
             }
         }
 
-        return '<div class="tl_page_info tl_subpanel" style="float:left;">
+        return '<div class="tl_page_info tl_subpanel" style="float:left; margin-left: 15px; text-align: left;">
 <strong>' . $GLOBALS['TL_LANG']['tl_page']['page_info_filter'] . '</strong>
-<select name="tl_page_info" class="tl_select' . ($blnActive ? ' active' : '') . '" onchange="this.form.submit()">
+<select name="tl_page_info" class="tl_select' . ($blnActive ? ' active' : '') . '" onchange="this.form.submit()" style="width: 300px; margin-left: 3px;">
 ' . implode("\n", $arrOptions) . '
 </select>
 </div>';
