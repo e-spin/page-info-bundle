@@ -28,3 +28,6 @@ Sucht man eine bestimmte Seite per Alias oder ID mit der Contao-Filterung, sieht
 fehlt oft die Orientierung, in welcher Hierarchie die Seite sich befindet - Alternative: den gesamten Seitenbaum
 öffnen, Alias bei der Seiteninfo auswählen und über die Suche des Browsers (Strg+f) nach dem Alias suchen. Damit
 sieht man gut, wo die Seite sich befindet.
+
+![Screenshot backend](https://github.com/e-spin/page-info-bundle/blob/master/doc/screenshot_01.png?raw=true "Screenshot backend")
+
