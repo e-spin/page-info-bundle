@@ -1,0 +1,42 @@
+{
+  "name": "e-spin/page-info-bundle",
+  "description": "Show different page information in Contao backend e.g. id, alias, title, layout and other more.",
+  "keywords": [
+    "contao",
+    "page",
+    "info",
+    "inforamtion",
+    "hint"
+  ],
+  "type": "contao-bundle",
+  "homepage": "https://www.e-spin.de",
+  "license": "LGPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "e-spin",
+      "email": "info@e-spin.de",
+      "homepage": "https://www.e-spin.de",
+      "role": "Developer"
+    },
+    {
+      "name": "Kamil Kuzminski",
+      "email": "kamil.kuzminski@codefog.pl",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^7.1",
+    "contao/core-bundle": "^4.4"
+  },
+  "require-dev": {
+    "contao/manager-plugin": "^2.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Espin\\PageInfoBundle\\": "src/"
+    }
+  },
+  "extra": {
+    "contao-manager-plugin": "Espin\\PageInfoBundle\\ContaoManager\\Plugin"
+  }
+}
