@@ -24,6 +24,16 @@
       "role": "Developer"
     }
   ],
+  "support": {
+    "issues": "https://github.com/e-spin/page-info-bundle/issues",
+    "source": "https://github.com/e-spin/page-info-bundle"
+  },
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/e-spin"
+    }
+  ],
   "require": {
     "php": "^7.1 || ^8.0",
     "contao/core-bundle": "^4.4"
