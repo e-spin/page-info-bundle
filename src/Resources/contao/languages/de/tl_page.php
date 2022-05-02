@@ -3,12 +3,12 @@
 /**
  * This file is part of e-spin/page-info-bundle.
  *
- * Copyright (c) 2020 e-spin
+ * Copyright (c) 2022 e-spin
  *
  * @package   e-spin/page-info-bundle
  * @author    Ingolf Steinhardt <info@e-spin.de>
  * @author    Kamil Kuzminski <kamil.kuzminski@codefog.pl>
- * @copyright 2020 e-spin
+ * @copyright 2022 e-spin
  * @license   LGPL-3.0-or-later
  */
 
@@ -43,4 +43,4 @@ $GLOBALS['TL_LANG']['tl_page']['page_info_options']['sitemap']                 =
 $GLOBALS['TL_LANG']['tl_page']['page_info_options']['search']                  = 'Suche';
 $GLOBALS['TL_LANG']['tl_page']['page_info_options']['show']                    = 'Sichtbar';
 $GLOBALS['TL_LANG']['tl_page']['page_info_options']['changelanguage_fallback'] =
-    '[' . $GLOBALS['TL_LANG']['MOD']['changelanguage'][0] . '] - ' . $GLOBALS['TL_LANG']['tl_page']['languageMain'][0];
+    '[Sprachenwechsler] - Seite in Hauptsprache';

@@ -3,12 +3,12 @@
 /**
  * This file is part of e-spin/page-info-bundle.
  *
- * Copyright (c) 2020 e-spin
+ * Copyright (c) 2022 e-spin
  *
  * @package   e-spin/page-info-bundle
  * @author    Ingolf Steinhardt <info@e-spin.de>
  * @author    Kamil Kuzminski <kamil.kuzminski@codefog.pl>
- * @copyright 2020 e-spin
+ * @copyright 2022 e-spin
  * @license   LGPL-3.0-or-later
  */
 
@@ -126,7 +126,7 @@ $GLOBALS['PAGE_INFO']['show'] = function($arrRow) {
 /**
  * Page info - changelanguage fallback
  */
-if (in_array('changelanguage', \ModuleLoader::getActive())) {
+if (in_array('Terminal42ChangeLanguageBundle', \ModuleLoader::getActive())) {
     $GLOBALS['PAGE_INFO']['changelanguage_fallback'] = function($arrRow) {
         $objPage = \PageModel::findByPk($arrRow['id']);
         if(empty($objPage->languageMain)) {
