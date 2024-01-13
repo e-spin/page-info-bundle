@@ -15,6 +15,6 @@
 declare(strict_types=1);
 
 /**
- * Add info to tl_page panel.
+ * Add info to tl_article panel.
  */
-$GLOBALS['TL_DCA']['tl_page']['list']['sorting']['panelLayout'] .= ',page_info';
+$GLOBALS['TL_DCA']['tl_article']['list']['sorting']['panelLayout'] .= ',article_info';

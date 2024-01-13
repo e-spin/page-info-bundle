@@ -5,7 +5,9 @@ Which information is displayed is selected via a pull-down in the header area.
 
 The information includes e.g. the page ID, alias, title, description, CSS, searchable, layout etc.
 
-# Contao Seiteninfo (DE)
+From version 2, various details are also displayed for the articles.
+
+# Contao Seiten- und Artikel-Info (DE)
 
 Mit der Erweiterung kann man in der Baumstruktur der Seitenansicht weitere Informationen zur Seite anzeigen.
 Welche Informationen eingeblendet werden, wird über ein Pull-Down im Kopfbereich ausgewählt.
@@ -18,6 +20,8 @@ ein Layout definiert ist.
 Die Erweiterung unterstützt die Erweiterung [changelanguage](https://github.com/terminal42/contao-changelanguage)
 und zeigt bei übersetzten Seiten den Titel der Stammseite an - eine gute Hilfe, sofern man die übersetzten
 Seitentitel nicht lesen kann.
+
+Ab Version 2 werden auch bei den Artikeln verschiedene Angaben ausgegeben.
 
 ## Tipps
 
