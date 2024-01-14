@@ -75,7 +75,7 @@ $GLOBALS['PAGE_INFO']['protected'] = static function ($arrRow) {
     }
     $groupsModel = MemberGroupModel::findMultipleByIds(StringUtil::deserialize($arrRow['groups'], true));
     $groups      = [];
-    foreach ($groupsModel as $groupModel) {
+    foreach ($groupsModel ?? [] as $groupModel) {
         $groups[] = $groupModel->name;
     }
 
@@ -239,7 +239,7 @@ $GLOBALS['ARTICLE_INFO']['protected'] = static function ($arrRow) {
     }
     $groupsModel = MemberGroupModel::findMultipleByIds(StringUtil::deserialize($arrRow['groups'], true));
     $groups      = [];
-    foreach ($groupsModel as $groupModel) {
+    foreach ($groupsModel ?? [] as $groupModel) {
         $groups[] = $groupModel->name;
     }
 
