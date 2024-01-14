@@ -3,12 +3,12 @@
 /**
  * This file is part of e-spin/page-info-bundle.
  *
- * Copyright (c) 2020 e-spin
+ * Copyright (c) 2020-2024 e-spin
  *
  * @package   e-spin/page-info-bundle
  * @author    Ingolf Steinhardt <info@e-spin.de>
  * @author    Kamil Kuzminski <kamil.kuzminski@codefog.pl>
- * @copyright 2020 e-spin
+ * @copyright 2020-2024 e-spin
  * @license   LGPL-3.0-or-later
  */
 
@@ -26,5 +26,6 @@ final class EspinPageInfoExtension extends Extension
     public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('services.yml');
     }
 }

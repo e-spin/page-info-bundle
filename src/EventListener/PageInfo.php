@@ -3,12 +3,12 @@
 /**
  * This file is part of e-spin/page-info-bundle.
  *
- * Copyright (c) 2020 e-spin
+ * Copyright (c) 2020-2024 e-spin
  *
  * @package   e-spin/page-info-bundle
  * @author    Ingolf Steinhardt <info@e-spin.de>
  * @author    Kamil Kuzminski <kamil.kuzminski@codefog.pl>
- * @copyright 2020 e-spin
+ * @copyright 2020-2024 e-spin
  * @license   LGPL-3.0-or-later
  */
 
@@ -16,72 +16,166 @@ declare(strict_types=1);
 
 namespace Espin\PageInfoBundle\EventListener;
 
+use Contao\DataContainer;
+use Contao\Input;
+use Symfony\Component\HttpFoundation\RequestStack;
+
 class PageInfo
 {
+    public function __construct(private readonly RequestStack $requestStack)
+    {
+    }
+
     /**
-     * Generate the panel and return it as HTML string
+     * Generate the panel and return it as HTML string.
+     *
      * @return string
      */
-    public function generatePanel()
+    public function generatePanel(): string
     {
-        if (\Input::post('FORM_SUBMIT') == 'tl_filters') {
+        if (!(\in_array(($currentType = \strtolower(Input::get('do'))), ['page', 'article']))) {
+            return '';
+        }
+
+        $tableKey         = \sprintf('tl_%s', $currentType);
+        $labelKey         = \sprintf('%s_info_filter', $currentType);
+        $optionsKey       = \sprintf('%s_info_options', $currentType);
+        $postKey          = \sprintf('tl_%s_info', $currentType);
+        $sessionKey       = \sprintf('%s_info', $currentType);
+        $configKey        = \sprintf('%s_INFO', \strtoupper($currentType));
+        $configSortingKey = \sprintf('%s_INFO_SORTING', \strtoupper($currentType));
+
+        if (Input::post('FORM_SUBMIT') === 'tl_filters') {
             $varValue = null;
 
             // Set new value
-            if (\Input::post('tl_page_info') != '' && array_key_exists(\Input::post('tl_page_info'), $GLOBALS['PAGE_INFO']) && in_array(\Input::post('tl_page_info'), $GLOBALS['PAGE_INFO_SORTING'])) {
-                $varValue = \Input::post('tl_page_info');
+            if (
+                Input::post($postKey) !== ''
+                && \array_key_exists(Input::post($postKey), $GLOBALS[$configKey])
+                && \in_array(Input::post($postKey), $GLOBALS[$configSortingKey])
+            ) {
+                $varValue = Input::post($postKey);
             }
 
-            \Session::getInstance()->set('page_info', $varValue);
+            $session = $this->requestStack->getSession();
+            $session->set($sessionKey, $varValue);
         }
 
-        $blnActive = false;
-        $strCurrent = $this->getCurrent();
-        $arrOptions = array('<option value=""' . (($strCurrent == '') ? ' selected' : '') . '>---</option>');
+        $isActive = false;
+        $current  = $this->getCurrent($sessionKey, $configKey, $configSortingKey);
+        $options  = ['<option value=""' . (empty($current) ? ' selected' : '') . '>---</option>'];
 
-        // Generate options
-        foreach ($GLOBALS['PAGE_INFO_SORTING'] as $v) {
-            if (!array_key_exists($v, $GLOBALS['PAGE_INFO'])) {
+        // Generate options for page.
+        foreach ($GLOBALS[$configSortingKey] as $v) {
+            if (!\array_key_exists($v, $GLOBALS[$configKey])) {
                 continue;
             }
 
-            $arrOptions[] = '<option value="' . $v . '"' . (($strCurrent == $v) ? ' selected' : '') . '>' . $GLOBALS['TL_LANG']['tl_page']['page_info_options'][$v] . '</option>';
+            $options[] = '<option value="' . $v . '"' . (($current === $v) ? ' selected' : '') . '>' . $GLOBALS['TL_LANG'][$tableKey][$optionsKey][$v] . '</option>';
 
             // The field is active
-            if (!$blnActive && $strCurrent == $v) {
-                $blnActive = true;
+            if (!$isActive && $current === $v) {
+                $isActive = true;
             }
         }
 
-        return '<div class="tl_page_info tl_subpanel" style="float:left; margin-left: 15px; text-align: left;">
-<strong>' . $GLOBALS['TL_LANG']['tl_page']['page_info_filter'] . '</strong>
-<select name="tl_page_info" class="tl_select' . ($blnActive ? ' active' : '') . '" onchange="this.form.submit()" style="width: 300px; margin-left: 3px;">
-' . implode("\n", $arrOptions) . '
+        return '<div class="' . $postKey . ' tl_subpanel" style="float:left; margin-left: 15px; text-align: left;">
+<strong>' . $GLOBALS['TL_LANG'][$tableKey][$labelKey] . '</strong>
+<select name="' . $postKey . '" class="tl_select' . ($isActive ? ' active' : '') .
+            '" onchange="this.form.submit()" style="width: 300px; margin-left: 3px;">
+' . \implode("\n", $options) . '
 </select>
 </div>';
     }
 
     /**
-     * Add hint to each record
-     * @param array
-     * @param string
-     * @param \DataContainer
-     * @param string
-     * @param boolean
-     * @param boolean
+     * Add hint to each page record.
+     *
+     * @param array              $row
+     * @param string             $label
+     * @param DataContainer|null $dc
+     * @param string             $imageAttribute
+     * @param boolean            $blnReturnImage
+     * @param boolean            $blnProtected
+     *
      * @return string
      */
-    public function addHint($row, $label, \DataContainer $dc=null, $imageAttribute='', $blnReturnImage=false, $blnProtected=false)
-    {
+    public function addPageHint(
+        array $row,
+        string $label,
+        DataContainer $dc = null,
+        string $imageAttribute = '',
+        bool $blnReturnImage = false,
+        bool $blnProtected = false
+    ): string {
+
         $objDefault = new \tl_page();
-        $strReturn = $objDefault->addIcon($row, $label, $dc, $imageAttribute, $blnReturnImage, $blnProtected);
-        $strCurrent = $this->getCurrent();
 
-        // Add a hint
-        if ($strCurrent != '') {
-            $varCallback = $GLOBALS['PAGE_INFO'][$strCurrent];
+        return $this->addHint($row, $label, $dc, $imageAttribute, $blnReturnImage, $blnProtected, $objDefault, 'page');
+    }
 
-            if (is_callable($varCallback)) {
+    /**
+     * Add hint to each article record.
+     *
+     * @param array              $row
+     * @param string             $label
+     * @param DataContainer|null $dc
+     * @param string             $imageAttribute
+     * @param boolean            $blnReturnImage
+     * @param boolean            $blnProtected
+     *
+     * @return string
+     */
+    public function addArticleHint(
+        array $row,
+        string $label,
+        DataContainer $dc = null,
+        string $imageAttribute = '',
+        bool $blnReturnImage = false,
+        bool $blnProtected = false
+    ): string {
+
+        $objDefault = new \tl_article();
+
+        return $this->addHint($row, $label, $dc, $imageAttribute, $blnReturnImage, $blnProtected, $objDefault, 'article');
+    }
+
+    /**
+     * Add hint to each record.
+     *
+     * @param array         $row
+     * @param string        $label
+     * @param DataContainer $dc
+     * @param string        $imageAttribute
+     * @param boolean       $blnReturnImage
+     * @param boolean       $blnProtected
+     * @param object        $objDefault
+     * @param string        $currentType
+     *
+     * @return string
+     */
+    public function addHint(
+        array $row,
+        string $label,
+        DataContainer $dc,
+        string $imageAttribute,
+        bool $blnReturnImage,
+        bool $blnProtected,
+        $objDefault,
+        $currentType
+    ): string {
+        $sessionKey       = \sprintf('%s_info', $currentType);
+        $configKey        = \sprintf('%s_INFO', \strtoupper($currentType));
+        $configSortingKey = \sprintf('%s_INFO_SORTING', \strtoupper($currentType));
+
+        $strReturn  = $objDefault->addIcon($row, $label, $dc, $imageAttribute, $blnReturnImage, $blnProtected);
+        $strCurrent = $this->getCurrent($sessionKey, $configKey, $configSortingKey);
+
+        // Add a hint.
+        if (null !== $strCurrent) {
+            $varCallback = $GLOBALS[$configKey][$strCurrent];
+
+            if (\is_callable($varCallback)) {
                 $strReturn .= ' <span style="padding-left:3px;color:#8A8A8A;">[' . $varCallback($row) . ']</span>';
             }
         }
@@ -90,15 +184,20 @@ class PageInfo
     }
 
     /**
-     * Get the current hint
-     * @param mixed
+     * Get the current hint.
+     *
      */
-    public function getCurrent()
+    public function getCurrent($sessionKey, $configKey, $configSortingKey)
     {
-        $strSession = \Session::getInstance()->get('page_info');
+        $session  = $this->requestStack->getSession();
+        $info = $session->get($sessionKey);
 
-        if ($strSession != '' && array_key_exists($strSession, $GLOBALS['PAGE_INFO']) && in_array($strSession, $GLOBALS['PAGE_INFO_SORTING'])) {
-            return $strSession;
+        if (
+            $info !== ''
+            && \array_key_exists($info, $GLOBALS[$configKey])
+            && \in_array($info, $GLOBALS[$configSortingKey])
+        ) {
+            return $info;
         }
 
         return null;
