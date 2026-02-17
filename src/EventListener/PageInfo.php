@@ -3,12 +3,12 @@
 /**
  * This file is part of e-spin/page-info-bundle.
  *
- * Copyright (c) 2020-2024 e-spin
+ * Copyright (c) 2020-2026 e-spin
  *
  * @package   e-spin/page-info-bundle
  * @author    Ingolf Steinhardt <info@e-spin.de>
  * @author    Kamil Kuzminski <kamil.kuzminski@codefog.pl>
- * @copyright 2020-2024 e-spin
+ * @copyright 2020-2026 e-spin
  * @license   LGPL-3.0-or-later
  */
 
@@ -18,7 +18,10 @@ namespace Espin\PageInfoBundle\EventListener;
 
 use Contao\DataContainer;
 use Contao\Input;
+use InvalidArgumentException;
+use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class PageInfo
 {
@@ -57,8 +60,10 @@ class PageInfo
                 $varValue = Input::post($postKey);
             }
 
-            $session = $this->requestStack->getSession();
-            $session->set($sessionKey, $varValue);
+            $sessionBag = $this->getSessionBag();
+            if (null !== $sessionBag) {
+                $sessionBag->set($sessionKey, $varValue);
+            }
         }
 
         $isActive = false;
@@ -189,8 +194,12 @@ class PageInfo
      */
     public function getCurrent($sessionKey, $configKey, $configSortingKey)
     {
-        $session  = $this->requestStack->getSession();
-        $info = $session->get($sessionKey);
+        $sessionBag = $this->getSessionBag();
+        if (null === $sessionBag) {
+            return null;
+        }
+
+        $info = $sessionBag->get($sessionKey);
 
         if (
             $info !== ''
@@ -201,5 +210,20 @@ class PageInfo
         }
 
         return null;
+    }
+
+    private function getSessionBag(): ?AttributeBagInterface
+    {
+        try {
+            $sessionBag = $this->requestStack->getSession()->getBag('contao_backend');
+        } catch (SessionNotFoundException | InvalidArgumentException $ignore) {
+            return null;
+        }
+
+        if (!$sessionBag instanceof AttributeBagInterface) {
+            return null;
+        }
+
+        return $sessionBag;
     }
 }
