@@ -47,6 +47,7 @@ class PageInfo
         $sessionKey       = \sprintf('%s_info', $currentType);
         $configKey        = \sprintf('%s_INFO', \strtoupper($currentType));
         $configSortingKey = \sprintf('%s_INFO_SORTING', \strtoupper($currentType));
+        $autoSubmitKey    = \sprintf('%s_AUTO_SUBMIT', \strtoupper($currentType));
 
         if (Input::post('FORM_SUBMIT') === 'tl_filters') {
             $varValue = null;
@@ -68,29 +69,37 @@ class PageInfo
 
         $isActive = false;
         $current  = $this->getCurrent($sessionKey, $configKey, $configSortingKey);
-        $options  = ['<option value=""' . (empty($current) ? ' selected' : '') . '>---</option>'];
+        $options  = ['<option value=""' . (empty($current) ? ' selected' : '') . '>-</option>'];
 
-        // Generate options for page.
+        // Generate options for the current type.
         foreach ($GLOBALS[$configSortingKey] as $v) {
             if (!\array_key_exists($v, $GLOBALS[$configKey])) {
                 continue;
             }
 
-            $options[] = '<option value="' . $v . '"' . (($current === $v) ? ' selected' : '') . '>' . $GLOBALS['TL_LANG'][$tableKey][$optionsKey][$v] . '</option>';
+            $options[] = '<option value="' . $v . '"' . (($current === $v) ? ' selected' : '') . '>'
+                         . $GLOBALS['TL_LANG'][$tableKey][$optionsKey][$v] . '</option>';
 
-            // The field is active
+            // The field is active.
             if (!$isActive && $current === $v) {
                 $isActive = true;
             }
         }
 
-        return '<div class="' . $postKey . ' tl_subpanel" style="float:left; margin-left: 15px; text-align: left;">
-<strong>' . $GLOBALS['TL_LANG'][$tableKey][$labelKey] . '</strong>
-<select name="' . $postKey . '" class="tl_select' . ($isActive ? ' active' : '') .
-            '" onchange="this.form.submit()" style="width: 300px; margin-left: 3px;">
-' . \implode("\n", $options) . '
-</select>
-</div>';
+        // Set auto submit.
+        $autoSubmit = '';
+        if (isset($GLOBALS[$autoSubmitKey]) && $GLOBALS[$autoSubmitKey] === true) {
+            $autoSubmit = ' onchange="this.form.submit()"';
+        }
+
+        return '<fieldset class="' . $postKey . ' tl_subpanel">
+<legend>' . $GLOBALS['TL_LANG'][$tableKey][$labelKey] . '</legend>
+<div class="' . $postKey . '_wrapper" data-controller="contao--choices">
+<select name="' . $postKey . '" class="tl_select' . ($isActive ? ' active' : '') . '"' . $autoSubmit . '>'
+. \implode("\n", $options)
+. '</select>
+</div>
+</fieldset>';
     }
 
     /**
@@ -142,7 +151,16 @@ class PageInfo
 
         $objDefault = new \tl_article();
 
-        return $this->addHint($row, $label, $dc, $imageAttribute, $blnReturnImage, $blnProtected, $objDefault, 'article');
+        return $this->addHint(
+            $row,
+            $label,
+            $dc,
+            $imageAttribute,
+            $blnReturnImage,
+            $blnProtected,
+            $objDefault,
+            'article'
+        );
     }
 
     /**
@@ -216,7 +234,7 @@ class PageInfo
     {
         try {
             $sessionBag = $this->requestStack->getSession()->getBag('contao_backend');
-        } catch (SessionNotFoundException | InvalidArgumentException $ignore) {
+        } catch (SessionNotFoundException|InvalidArgumentException $ignore) {
             return null;
         }
 

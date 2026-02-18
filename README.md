@@ -23,9 +23,16 @@ Seitentitel nicht lesen kann.
 
 Ab Version 2 werden auch bei den Artikeln verschiedene Angaben ausgegeben.
 
+## Installation
+
+* Version ^2.1 -> Contao 5.7
+* Version ^2.0 -> Contao 4.13 bis 5.6
+
+Im Contao-Manager nach `e-spin/page-info-bundle` suchen und installieren
+
 ## Tipps
 
-Mit der Anzeige der Titel und Beschreibungen, hat man einen schnellen Überblick, bei welchen Seiten für SEO
+Mit der Anzeige der Titel und Beschreibungen hat man einen schnellen Überblick, bei welchen Seiten für SEO
 noch nachgearbeitet werden sollte.
 
 Sucht man eine bestimmte Seite per Alias oder ID mit der Contao-Filterung, sieht man nur die eine Seite - hier
@@ -35,3 +42,24 @@ sieht man gut, wo die Seite sich befindet.
 
 ![Screenshot backend](https://github.com/e-spin/page-info-bundle/blob/master/doc/screenshot_01.png?raw=true "Screenshot backend")
 
+Ab Version 2.1 (Contao ^5.7) kann die Reihenfolge des Panels per DCA geändert werden. Um an die letzte Stelle zu
+kommen, DCA wie folgt anpassen:
+
+```php
+// tl_page.php
+$GLOBALS['TL_DCA']['tl_page']['list']['sorting']['panelLayout'] .= ',page_info';
+```
+
+bzw.
+```php
+// tl_article.php
+$GLOBALS['TL_DCA']['tl_article']['list']['sorting']['panelLayout'] .= ',article_info';
+```
+
+Das Auto-Submit kann auch deaktiviert werden:
+
+```php
+// config.php
+$GLOBALS['PAGE_AUTO_SUBMIT']    = false;
+$GLOBALS['ARTICLE_AUTO_SUBMIT'] = false;
+```

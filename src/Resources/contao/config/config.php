@@ -3,12 +3,12 @@
 /**
  * This file is part of e-spin/page-info-bundle.
  *
- * Copyright (c) 2020-2024 e-spin
+ * Copyright (c) 2020-2026 e-spin
  *
  * @package   e-spin/page-info-bundle
  * @author    Ingolf Steinhardt <info@e-spin.de>
  * @author    Kamil Kuzminski <kamil.kuzminski@codefog.pl>
- * @copyright 2020-2024 e-spin
+ * @copyright 2020-2026 e-spin
  * @license   LGPL-3.0-or-later
  */
 
@@ -181,6 +181,10 @@ $GLOBALS['PAGE_INFO']['version'] = static function ($arrRow) {
  */
 $GLOBALS['PAGE_INFO_SORTING'] = \array_keys($GLOBALS['PAGE_INFO']);
 
+/**
+ * Page auto submit
+ */
+$GLOBALS['PAGE_AUTO_SUBMIT'] = true;
 
 /** ~~~~~~~~~~~ ARTICLE ~~~~~~~~~~~ */
 
@@ -283,6 +287,10 @@ $GLOBALS['ARTICLE_INFO']['version'] = static function ($arrRow) {
  */
 $GLOBALS['ARTICLE_INFO_SORTING'] = \array_keys($GLOBALS['ARTICLE_INFO']);
 
+/**
+ * Article auto submit
+ */
+$GLOBALS['ARTICLE_AUTO_SUBMIT'] = true;
 
 /**
  * Get last version for table.

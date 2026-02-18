@@ -36,8 +36,8 @@
     }
   ],
   "require": {
-    "php": "^8.1",
-    "contao/core-bundle": "^4.13 || ^5.2 <5.7"
+    "php": "^8.3",
+    "contao/core-bundle": "^5.7"
   },
   "require-dev": {
     "contao/manager-plugin": "^2.2"
@@ -48,6 +48,9 @@
     }
   },
   "extra": {
+    "branch-alias": {
+      "dev-master": "2.1.x-dev"
+    },
     "contao-manager-plugin": "Espin\\PageInfoBundle\\ContaoManager\\Plugin"
   }
 }
