@@ -3,12 +3,12 @@
 /**
  * This file is part of e-spin/page-info-bundle.
  *
- * Copyright (c) 2020-2024 e-spin
+ * Copyright (c) 2020-2026 e-spin
  *
  * @package   e-spin/page-info-bundle
  * @author    Ingolf Steinhardt <info@e-spin.de>
  * @author    Kamil Kuzminski <kamil.kuzminski@codefog.pl>
- * @copyright 2020-2024 e-spin
+ * @copyright 2020-2026 e-spin
  * @license   LGPL-3.0-or-later
  */
 
@@ -154,10 +154,22 @@ $GLOBALS['PAGE_INFO']['show'] = static function ($arrRow) {
  */
 $bundles = System::getContainer()->getParameter('kernel.bundles');
 if (\array_key_exists('Terminal42ChangeLanguageBundle', $bundles)) {
+
     $GLOBALS['PAGE_INFO']['changelanguage_fallback'] = static function ($arrRow) {
-        $page = PageModel::findByPk($arrRow['id']);
-        if (null !== $page && empty($page->languageMain)) {
+        $page     = PageModel::findWithDetails($arrRow['id']);
+        $rootPage = PageModel::findWithDetails($page?->rootId);
+        if (null !== $page && $rootPage?->fallback) {
             return 'IDp: ' . $arrRow['id'];
+        }
+
+        if (empty($page->languageMain)) {
+            return 'IDp: ' . $arrRow['id'] . ', ' . \sprintf(
+                    '<img src="%s" alt="%s" title="%s" style="padding-top: 3px">%s',
+                    'bundles/terminal42changelanguage/language-warning.png',
+                    $GLOBALS['TL_LANG']['MSC']['noMainLanguage'],
+                    $GLOBALS['TL_LANG']['MSC']['noMainLanguage'],
+                    $GLOBALS['TL_LANG']['MSC']['noMainLanguage'],
+                );
         }
 
         $objFallbackPage = PageModel::findByPk($page->languageMain);
