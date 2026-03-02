@@ -154,10 +154,22 @@ $GLOBALS['PAGE_INFO']['show'] = static function ($arrRow) {
  */
 $bundles = System::getContainer()->getParameter('kernel.bundles');
 if (\array_key_exists('Terminal42ChangeLanguageBundle', $bundles)) {
+
     $GLOBALS['PAGE_INFO']['changelanguage_fallback'] = static function ($arrRow) {
-        $page = PageModel::findByPk($arrRow['id']);
-        if (null !== $page && empty($page->languageMain)) {
+        $page     = PageModel::findWithDetails($arrRow['id']);
+        $rootPage = PageModel::findWithDetails($page?->rootId);
+        if (null !== $page && $rootPage?->fallback) {
             return 'IDp: ' . $arrRow['id'];
+        }
+
+        if (empty($page->languageMain)) {
+            return 'IDp: ' . $arrRow['id'] . ', ' . \sprintf(
+                    '<img src="%s" alt="%s" title="%s" style="padding-top: 3px">%s',
+                    'bundles/terminal42changelanguage/language-warning.png',
+                    $GLOBALS['TL_LANG']['MSC']['noMainLanguage'],
+                    $GLOBALS['TL_LANG']['MSC']['noMainLanguage'],
+                    $GLOBALS['TL_LANG']['MSC']['noMainLanguage'],
+                );
         }
 
         $objFallbackPage = PageModel::findByPk($page->languageMain);
