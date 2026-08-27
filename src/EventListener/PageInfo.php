@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Espin\PageInfoBundle\EventListener;
 
+use Contao\CoreBundle\String\HtmlAttributes;
 use Contao\DataContainer;
 use Contao\Input;
 use InvalidArgumentException;
@@ -108,7 +109,7 @@ class PageInfo
      * @param array              $row
      * @param string             $label
      * @param DataContainer|null $dc
-     * @param string             $imageAttribute
+     * @param array|string       $imageAttribute
      * @param boolean            $blnReturnImage
      * @param boolean            $blnProtected
      *
@@ -118,7 +119,7 @@ class PageInfo
         array $row,
         string $label,
         DataContainer $dc = null,
-        string $imageAttribute = '',
+        array|string $imageAttribute = '',
         bool $blnReturnImage = false,
         bool $blnProtected = false
     ): string {
@@ -134,7 +135,7 @@ class PageInfo
      * @param array              $row
      * @param string             $label
      * @param DataContainer|null $dc
-     * @param string             $imageAttribute
+     * @param array|string       $imageAttribute
      * @param boolean            $blnReturnImage
      * @param boolean            $blnProtected
      *
@@ -144,7 +145,7 @@ class PageInfo
         array $row,
         string $label,
         DataContainer $dc = null,
-        string $imageAttribute = '',
+        array|string $imageAttribute = '',
         bool $blnReturnImage = false,
         bool $blnProtected = false
     ): string {
@@ -169,7 +170,7 @@ class PageInfo
      * @param array         $row
      * @param string        $label
      * @param DataContainer $dc
-     * @param string        $imageAttribute
+     * @param array|string  $imageAttribute
      * @param boolean       $blnReturnImage
      * @param boolean       $blnProtected
      * @param object        $objDefault
@@ -181,7 +182,7 @@ class PageInfo
         array $row,
         string $label,
         DataContainer $dc,
-        string $imageAttribute,
+        array|string $imageAttribute,
         bool $blnReturnImage,
         bool $blnProtected,
         $objDefault,
@@ -190,6 +191,12 @@ class PageInfo
         $sessionKey       = \sprintf('%s_info', $currentType);
         $configKey        = \sprintf('%s_INFO', \strtoupper($currentType));
         $configSortingKey = \sprintf('%s_INFO_SORTING', \strtoupper($currentType));
+
+        // BC: some callers (e.g. the dc-general tree picker used by MetaModels tag attributes)
+        // pass the image attributes as an array instead of a pre-rendered string.
+        if (\is_array($imageAttribute)) {
+            $imageAttribute = (string) new HtmlAttributes($imageAttribute);
+        }
 
         $strReturn  = $objDefault->addIcon($row, $label, $dc, $imageAttribute, $blnReturnImage, $blnProtected);
         $strCurrent = $this->getCurrent($sessionKey, $configKey, $configSortingKey);
