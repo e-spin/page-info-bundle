@@ -25,7 +25,7 @@ Ab Version 2 werden auch bei den Artikeln verschiedene Angaben ausgegeben.
 
 ## Installation
 
-* Version ^2.1 -> Contao 5.7
+* Version ^2.1 -> Contao 5.7 und 6.x
 * Version ^2.0 -> Contao 4.13 bis 5.6
 
 Im Contao-Manager nach `e-spin/page-info-bundle` suchen und installieren
