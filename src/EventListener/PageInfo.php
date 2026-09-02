@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Espin\PageInfoBundle\EventListener;
 
+use Contao\CoreBundle\DataContainer\RecordLabel;
 use Contao\CoreBundle\String\HtmlAttributes;
 use Contao\DataContainer;
 use Contao\Input;
@@ -113,7 +114,7 @@ class PageInfo
      * @param boolean            $blnReturnImage
      * @param boolean            $blnProtected
      *
-     * @return string
+     * @return RecordLabel|string
      */
     public function addPageHint(
         array $row,
@@ -122,7 +123,7 @@ class PageInfo
         array|string $imageAttribute = '',
         bool $blnReturnImage = false,
         bool $blnProtected = false
-    ): string {
+    ): RecordLabel|string {
 
         $objDefault = new \tl_page();
 
@@ -139,7 +140,7 @@ class PageInfo
      * @param boolean            $blnReturnImage
      * @param boolean            $blnProtected
      *
-     * @return string
+     * @return RecordLabel|string
      */
     public function addArticleHint(
         array $row,
@@ -148,7 +149,7 @@ class PageInfo
         array|string $imageAttribute = '',
         bool $blnReturnImage = false,
         bool $blnProtected = false
-    ): string {
+    ): RecordLabel|string {
 
         $objDefault = new \tl_article();
 
@@ -176,7 +177,7 @@ class PageInfo
      * @param object        $objDefault
      * @param string        $currentType
      *
-     * @return string
+     * @return RecordLabel|string
      */
     public function addHint(
         array $row,
@@ -187,7 +188,7 @@ class PageInfo
         bool $blnProtected,
         $objDefault,
         $currentType
-    ): string {
+    ): RecordLabel|string {
         $sessionKey       = \sprintf('%s_info', $currentType);
         $configKey        = \sprintf('%s_INFO', \strtoupper($currentType));
         $configSortingKey = \sprintf('%s_INFO_SORTING', \strtoupper($currentType));
@@ -206,7 +207,16 @@ class PageInfo
             $varCallback = $GLOBALS[$configKey][$strCurrent];
 
             if (\is_callable($varCallback)) {
-                $strReturn .= ' <span style="padding-left:3px;color:#8A8A8A;">[' . $varCallback($row) . ']</span>';
+                $hint = ' <span style="padding-left:3px;color:#8A8A8A;">[' . $varCallback($row) . ']</span>';
+
+                // Contao 6's tl_page/tl_article::addIcon() returns a RecordLabel value object
+                // instead of a plain HTML string - append the hint to its rendered HTML rather
+                // than concatenating onto the object itself.
+                if ($strReturn instanceof RecordLabel) {
+                    $strReturn->htmlLabel = ($strReturn->htmlLabel ?? $strReturn->label) . $hint;
+                } else {
+                    $strReturn .= $hint;
+                }
             }
         }
 
